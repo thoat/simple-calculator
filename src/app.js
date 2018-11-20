@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import io from 'socket.io';
 import logo from './logo.svg';
 import './app.css';
+
+const socket = io(); // not specify a URL, since it defaults to trying to connect to the host that serves the page
 
 class App extends Component {
   state = {
@@ -8,21 +11,28 @@ class App extends Component {
   };
 
   componentDidMount() {
+    this.fetchHistory();
+  }
+
+  fetchHistory = () => {
     fetch('/history')
-      .then(res => res.json())
+      .then(res => res.json()) // can't skip this! Or else, the returned stuff is the Response object, not the data I want!
       .then((data) => {
-        // if (err) throw err;
         console.log(data);
-        // console.log(res.body);
         this.setState({ data });
       });
   }
 
+  handleNewRecord = () => {
+    socket.emit('new record', { entry });
+    socket.on('new record', this.fetchHistory);
+  }
+
   render() {
     const { data } = this.state;
-    const entries = data.map(member => <li>{member.name + member.team}</li>);
+    const entries = data.map(row => <li>{row.entry}</li>);
     return (
-      <ol>{entries}</ol>
+      <ul>{entries}</ul>
       // <div className="App">
       //   <header className="App-header">
       //     <img src={logo} className="App-logo" alt="logo" />

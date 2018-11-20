@@ -7,43 +7,26 @@ const io = require('socket.io')(http);
 
 const port = process.env.PORT || 5000;
 
-const GET_HISTORY_QUERY = 'SELECT entry, date_created '
-  + 'FROM calculations_history '
-  + 'LIMIT 10;';
-const SAVE_HISTORY_QUERY = 'INSERT INTO calculations_history (entry) '
-  + 'VALUES ';
-const DELETE_OLDEST_QUERY = 'DELETE FROM calculations_history AS h'
-  + 'WHERE id = ('
-  + 'SELECT id FROM h '
-  + 'LIMIT 1'
-  + ');';
+const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl LIMIT 10;';
+const SAVE_RECORD_QUERY = 'INSERT INTO top10hist_tbl (entry) VALUES ';
+const DELETE_OLDEST_QUERY = 'DELETE FROM top10hist_tbl WHERE rowid = ('
+  + 'SELECT rowid FROM top10hist_tbl LIMIT 1);';
 
 // // PART 1: Open DB connection
 const client = new Client({
-  connectionString: 'postgres://thoa1:20181118SUN@localhost:5433/standup_db', // process.env.DATABASE_URL,
+  connectionString: 'postgres://thoa2:sezzle2K!8@localhost:5433/calc_db', // process.env.DATABASE_URL,
 });
 
 // app.use(express.json());
 
 app.get('/history', (request, response) => {
   client.connect()
-    .then(client.query('SELECT * FROM members LIMIT 10;', (err, res) => {
+    .then(client.query(GET_HISTORY_QUERY, (err, res) => {
       if (err) throw err;
       response.send(res.rows);
       client.end();
     })).catch(err => console.log(err));
 });
-// getHistory = (socket) => {
-//   client.connect();
-//   client.query(GET_HISTORY_QUERY, (err, res) => {
-//     if (err) throw err;
-//     let data = null;
-//     // data = res.rows.map((row) => { JSON.stringify(row) }); ??am I sure? is this data an array or an object?
-//     socket.emit('message', data);
-//     client.end();
-//   }
-//   );
-// }
 
 // saveHistory = (socket, data) => {
 //   client.connect();
@@ -62,7 +45,9 @@ app.get('/history', (request, response) => {
 // this will listen for new records updated. TODO: I also want the history to load at appload.
 const onConnection = (socket) => {
   socket.on('new record', (data) => {
-    socket.broadcast.emit('new record', data);
+    console.log(data);
+    // save to database
+    io.emit('new record');
   });
 };
 
