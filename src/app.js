@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import io from 'socket.io';
-import logo from './logo.svg';
+import io from 'socket.io-client'; // let's see if this helps prevent the error "module 'uws' not found"
+// import logo from './logo.svg';
 import './app.css';
 
-const socket = io(); // not specify a URL, since it defaults to trying to connect to the host that serves the page
+// const socket = io(); // not specify a URL, since it defaults to trying to connect to the host that serves the page
+const socket = io('ws://localhost:3000'); //, {transports: ['websocket']});
 
 class App extends Component {
   state = {
@@ -23,16 +24,27 @@ class App extends Component {
       });
   }
 
-  handleNewRecord = () => {
-    socket.emit('new record', { entry });
+  handleNewRecord = (e) => {
+    e.preventDefault();
+    const { value } = e.target.elements.expression; // e.target returns the "form" object
+    console.log(value);
+    socket.emit('new record', { entry: value });
     socket.on('new record', this.fetchHistory);
   }
 
   render() {
     const { data } = this.state;
-    const entries = data.map(row => <li>{row.entry}</li>);
+    const entries = data.map(row => <li key={row.rowid}>{row.entry}</li>);
     return (
-      <ul>{entries}</ul>
+      <div>
+        <ul>{entries}</ul>
+        <form onSubmit={this.handleNewRecord}>
+          {'Enter an expression: '}
+          <input type="text" name="expression" value="dummy X + dummy Y"/>
+          <br />
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
       // <div className="App">
       //   <header className="App-header">
       //     <img src={logo} className="App-logo" alt="logo" />

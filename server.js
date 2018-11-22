@@ -45,13 +45,14 @@ app.get('/history', (request, response) => {
 // this will listen for new records updated. TODO: I also want the history to load at appload.
 const onConnection = (socket) => {
   socket.on('new record', (data) => {
-    console.log(data);
+    console.log('hello from server', data.entry);
     // save to database
     io.emit('new record');
   });
+  socket.on('disconnect', () => console.log('socket disconnected'));
 };
 
-// io.on('conncection', onConnection);
+io.on('connection', onConnection);
 
 // io.on('connection', (socket) => {
 //   // receive new records to save from front-end
