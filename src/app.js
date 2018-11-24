@@ -19,12 +19,9 @@ class App extends Component {
     socket.on('history', data => this.setState({ data }));
   }
 
-  handleNewRecord = (e) => {
-    e.preventDefault();
-    const { value } = e.target.elements.expression; // e.target returns the "form" object
-    console.log(value);
+  handleNewRecord = (record) => {
     const { socket } = this.state;
-    socket.emit('new record', { entry: value });
+    socket.emit('new record', { entry: record });
   }
 
   render() {
@@ -34,7 +31,7 @@ class App extends Component {
       return (
         <div>
           <h1>Your Simple Calculator</h1>
-          <CalculatorFrame onEvaluate={this.handleNewRecord} />
+          <CalculatorFrame onSubmitRecord={this.handleNewRecord} />
           <RecordList entries={entries} />
         </div>
       );
