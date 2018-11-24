@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import socketIoClient from 'socket.io-client';
 import './app.css';
 
+import CalculatorFrame from './components/calculator-frame';
+import RecordList from './components/record-list';
+
 // const socket = socketIoClient('ws://localhost:3000'); //, {transports: ['websocket']}); PREVIOUS TROUBLESHOOTING
 
 class App extends Component {
@@ -30,13 +33,9 @@ class App extends Component {
       const entries = data.map(row => <li key={row.rowid}>{row.entry}</li>);
       return (
         <div>
-          <ul>{entries}</ul>
-          <form onSubmit={this.handleNewRecord}>
-            {'Enter an expression: '}
-            <input type="text" name="expression" value="xYxYxY"/>
-            <br />
-            <input type="submit" value="Submit" />
-          </form>
+          <h1>Your Simple Calculator</h1>
+          <CalculatorFrame onEvaluate={this.handleNewRecord} />
+          <RecordList entries={entries} />
         </div>
       );
     } else {
