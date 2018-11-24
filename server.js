@@ -1,77 +1,92 @@
+/* eslint-disable no-console */
+const { Pool } = require('pg');
 const express = require('express');
-
-const app = express();
-const { Client } = require('pg');
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const http = require('http');
+const socketIo = require('socket.io');
 
 const port = process.env.PORT || 5000;
 
-const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl LIMIT 10;';
-const SAVE_RECORD_QUERY = 'INSERT INTO top10hist_tbl (entry) VALUES ';
-const DELETE_OLDEST_QUERY = 'DELETE FROM top10hist_tbl WHERE rowid = ('
-  + 'SELECT rowid FROM top10hist_tbl LIMIT 1);';
-
-// // PART 1: Open DB connection
-const client = new Client({
+/* Use a connection pool instead of a single Client because this app
+will make frequent queries */
+const db = new Pool({
   connectionString: 'postgres://thoa2:sezzle2K!8@localhost:5433/calc_db', // process.env.DATABASE_URL,
 });
 
-// app.use(express.json());
-
-app.get('/history', (request, response) => {
-  client.connect()
-    .then(client.query(GET_HISTORY_QUERY, (err, res) => {
-      if (err) throw err;
-      response.send(res.rows);
-      client.end();
-    })).catch(err => console.log(err));
+/* The pool will emit an error on behalf of any idle clients it
+contains if a backend error or network partition happens */
+db.on('error', (err) => {
+  console.log('Unexpected error on idle client', err);
+  process.exit(-1);
 });
 
-// saveHistory = (socket, data) => {
-//   client.connect();
-//   let updateHistoryQuery =
-//     SAVE_HISTORY_QUERY
-//     + `(${data});` //TODO: verify if this is correct format
-//     + DELETE_OLDEST_QUERY;
-//   client.query(updateHistoryQuery, (err, res) => {
-//     if (err) throw err;
-//     socket.broadcast.emit('new record added');
-//   })
-//   client.end();
-// }
+// const index = require('./routes/index');
 
-// PART 2: WebSocket & events
-// this will listen for new records updated. TODO: I also want the history to load at appload.
-const onConnection = (socket) => {
-  socket.on('new record', (data) => {
-    console.log('hello from server', data.entry);
-    // save to database
-    io.emit('new record');
-  });
-  socket.on('disconnect', () => console.log('socket disconnected'));
+const app = express();
+// app.use(index);
+
+const server = http.createServer(app);
+
+const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl LIMIT 10;';
+
+const fetchHistory = async (socket) => {
+  try {
+    const { rows } = await db.query(GET_HISTORY_QUERY);
+    socket.emit('history', rows);
+  } catch (err) {
+    console.error(`Error &^&^: ${err}`);
+  }
 };
 
-io.on('connection', onConnection);
+const forceUpdateHistory = async (io) => {
+  try {
+    const { rows } = await db.query(GET_HISTORY_QUERY);
+    io.emit('history', rows);
+  } catch (err) {
+    console.error(`Error &^&^: ${err}`);
+  }
+};
 
-// io.on('connection', (socket) => {
-//   // receive new records to save from front-end
-//   socket.on('new record', saveNewRecord(socket, data));
-//   socket.emit('event name', { some: 'data' });
-// });
+const SAVE_RECORD_QUERY = 'INSERT INTO top10hist_tbl (entry) VALUES ';
+const DELETE_OLDEST_QUERY = 'DELETE FROM top10hist_tbl WHERE rowid = ('
++ 'SELECT rowid FROM top10hist_tbl LIMIT 1);';
 
-const prod = process.env.NODE_ENV === 'production';
-if (prod) {
-  app.use(express.static(`${__dirname}/build`));
-  app.get('*', (req, res) => {
-    res.sendFile(`${__dirname}/build/index.html`);
-  });
-} else {
-  app.use(express.static(`${__dirname}/public`));
-  app.get('*', (req, res) => {
-    res.sendFile(`${__dirname}/public/index.html`);
-  });
-}
+const saveNewRecord = async (data, socket) => {
+  try {
+    const { entry } = data;
+    console.log('neww recorddd', data);
+    const query = `${SAVE_RECORD_QUERY} ('${entry}'); ${DELETE_OLDEST_QUERY}`;
+    console.log('query:', query);
+    await db.query(query);
+    forceUpdateHistory(socket);
+  } catch (err) {
+    console.error(`Error &^&^: ${err}`);
+  }
+};
 
-// eslint-disable-next-line no-console
-http.listen(port, () => console.log(`Listening on ${port}...`));
+const io = socketIo(server);
+io.on('connection', (socket) => {
+  console.log('New client connected', fetchHistory(socket));
+  socket.on('new record', data => saveNewRecord(data, io));
+  socket.on('disconnect', () => console.log('Client disconnected'));
+});
+
+// when to?
+// await pool.end();
+
+// app.use(express.json());
+
+// For Heroku deployment
+// const prod = process.env.NODE_ENV === 'production';
+// if (prod) {
+//   app.use(express.static(`${__dirname}/build`));
+//   app.get('*', (req, res) => {
+//     res.sendFile(`${__dirname}/build/index.html`);
+//   });
+// } else {
+//   app.use(express.static(`${__dirname}/public`));
+//   app.get('*', (req, res) => {
+//     res.sendFile(`${__dirname}/public/index.html`);
+//   });
+// }
+
+server.listen(port, console.log(`Listening on ${port}...`));

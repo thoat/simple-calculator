@@ -12,7 +12,8 @@
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-scripts": "2.1.1",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
     "babel-eslint": "9.0.0",
@@ -35,7 +36,8 @@
     "client": "react-scripts start",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
     "eject": "react-scripts eject",
-    "lint": "node_modules/.bin/eslint .",
+    "lint all": "node_modules/.bin/eslint .",
+    "lint": "node_modules/.bin/eslint",
     "server": "nodemon server.js",
     "start": "react-scripts start",
     "test": "react-scripts test"
