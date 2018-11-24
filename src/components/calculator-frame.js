@@ -1,9 +1,10 @@
+import * as math from 'mathjs';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 export default class CalculatorFrame extends Component {
   static propTypes = {
-    onEvaluate: PropTypes.func.isRequired,
+    onSubmitRecord: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -22,12 +23,18 @@ export default class CalculatorFrame extends Component {
     this.setState({ input: '' });
   }
 
-  evaluateInputExpr = () => {
+  evaluateInputExpr = (e) => {
+    e.preventDefault();
     const { input } = this.state;
+    // TODO: may want to validate the input first
+    const output = math.eval(input);
+    const newRecord = `${input}=${output}`;
+    const { onSubmitRecord } = this.props;
+    onSubmitRecord(newRecord);
+    this.clearInput();
   }
 
   render() {
-    const { onEvaluate } = this.props;
     const { input } = this.state;
     return (
       <form onSubmit={this.evaluateInputExpr}>
@@ -36,12 +43,12 @@ export default class CalculatorFrame extends Component {
         <button type="button" onClick={this.takeInput} value="7">7</button>
         <button type="button" onClick={this.takeInput} value="8">8</button>
         <button type="button" onClick={this.takeInput} value="9">9</button>
-        <button type="button" onClick={this.takeInput} value="%">%</button>
+        <button type="button" onClick={this.takeInput} value="/">/</button>
         <br />
         <button type="button" onClick={this.takeInput} value="4">4</button>
         <button type="button" onClick={this.takeInput} value="5">5</button>
         <button type="button" onClick={this.takeInput} value="6">6</button>
-        <button type="button" onClick={this.takeInput} value="x">x</button>
+        <button type="button" onClick={this.takeInput} value="*">*</button>
         <br />
         <button type="button" onClick={this.takeInput} value="1">1</button>
         <button type="button" onClick={this.takeInput} value="2">2</button>
