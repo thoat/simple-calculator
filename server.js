@@ -6,12 +6,12 @@ const socketIo = require('socket.io');
 
 const port = process.env.PORT || 5000;
 
-/* If your app or software makes frequent queries, you'll want
-to use a connection pool. The client pool allows you to have a 
-reusable pool of clients you can check out, use, and return */
+/* Use a connection pool instead of a single Client because this app
+will make frequent queries */
 const db = new Pool({
   connectionString: 'postgres://thoa2:sezzle2K!8@localhost:5433/calc_db', // process.env.DATABASE_URL,
 });
+
 /* The pool will emit an error on behalf of any idle clients it
 contains if a backend error or network partition happens */
 db.on('error', (err) => {
@@ -19,10 +19,10 @@ db.on('error', (err) => {
   process.exit(-1);
 });
 
-const index = require('./routes/index');
+// const index = require('./routes/index');
 
 const app = express();
-app.use(index);
+// app.use(index);
 
 const server = http.createServer(app);
 
@@ -74,47 +74,6 @@ io.on('connection', (socket) => {
 // await pool.end();
 
 // app.use(express.json());
-
-// app.get('/history', (request, response) => {
-//   client.connect()
-//     .then(client.query(GET_HISTORY_QUERY, (err, res) => {
-//       if (err) throw err;
-//       response.send(res.rows);
-//       client.end();
-//     })).catch(err => console.log(err));
-// });
-
-// saveHistory = (socket, data) => {
-//   client.connect();
-//   let updateHistoryQuery =
-//     SAVE_HISTORY_QUERY
-//     + `(${data});` //TODO: verify if this is correct format
-//     + DELETE_OLDEST_QUERY;
-//   client.query(updateHistoryQuery, (err, res) => {
-//     if (err) throw err;
-//     socket.broadcast.emit('new record added');
-//   })
-//   client.end();
-// }
-
-// PART 2: WebSocket & events
-// this will listen for new records updated. TODO: I also want the history to load at appload.
-// const onConnection = (socket) => {
-//   socket.on('new record', (data) => {
-//     console.log('hello from server', data.entry);
-//     // save to database
-//     io.emit('new record');
-//   });
-//   socket.on('disconnect', () => console.log('socket disconnected'));
-// };
-
-// io.on('connection', onConnection);
-
-// io.on('connection', (socket) => {
-//   // receive new records to save from front-end
-//   socket.on('new record', saveNewRecord(socket, data));
-//   socket.emit('event name', { some: 'data' });
-// });
 
 // For Heroku deployment
 // const prod = process.env.NODE_ENV === 'production';
