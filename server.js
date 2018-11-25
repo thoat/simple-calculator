@@ -25,7 +25,7 @@ db.on('error', (err) => {
   process.exit(-1);
 });
 
-const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl LIMIT 10;';
+const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl ORDER BY created_at DESC LIMIT 10;';
 
 const emitHistory = async (emitter) => {
   try {
@@ -37,14 +37,12 @@ const emitHistory = async (emitter) => {
 };
 
 const SAVE_RECORD_QUERY = 'INSERT INTO top10hist_tbl (entry) VALUES ';
-const DELETE_OLDEST_QUERY = 'DELETE FROM top10hist_tbl WHERE rowid = ('
-  + 'SELECT rowid FROM top10hist_tbl LIMIT 1);';
 
 const saveNewRecord = async (data) => {
   try {
     const { entry } = data;
     console.log('neww recorddd', data);
-    const query = `${SAVE_RECORD_QUERY} ('${entry}'); ${DELETE_OLDEST_QUERY}`;
+    const query = `${SAVE_RECORD_QUERY} ('${entry}');`;
     console.log('query:', query);
     await db.query(query);
     emitHistory(io);
@@ -61,8 +59,6 @@ io.on('connection', (socket) => {
 
 // when to?
 // await pool.end();
-
-// app.use(express.json());
 
 // For Heroku deployment
 // const prod = process.env.NODE_ENV === 'production';

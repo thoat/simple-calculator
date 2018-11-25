@@ -26,6 +26,11 @@ export default class CalculatorFrame extends Component {
   evaluateInputExpr = (e) => {
     e.preventDefault();
     const { input } = this.state;
+    if (!input.length) {
+      // empty input aka form is invalid, so we do nothing
+      alert('Cannot submit empty');
+      return;
+    }
     // TODO: may want to validate the input first
     const output = math.eval(input);
     const newRecord = `${input}=${output}`;

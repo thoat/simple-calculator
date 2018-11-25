@@ -3,8 +3,8 @@ import React from 'react';
 
 const RecordList = ({ entries }) => (
   <div>
-    <h4>Last 10 entries:</h4>
-    <ul>{entries}</ul>
+    <h4>Last 10 entries (most recent first):</h4>
+    <ol>{entries}</ol>
   </div>
 );
 
