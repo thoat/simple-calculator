@@ -107,7 +107,21 @@ export default class CalculatorFrame extends Component {
   }
 
   clearInput = () => {
-    this.setState({ inputTokens: [] });
+    this.setState({ inputTokens: [], numBuffer: [] });
+  }
+
+  deleteLastChar = () => {
+    const { inputTokens, numBuffer } = this.state;
+
+    if (numBuffer.length) {
+      const newArr = numBuffer.slice();
+      newArr.splice(-1, 1);
+      this.setState({ numBuffer: newArr });
+    } else if (inputTokens.length) {
+      const newArr = inputTokens.slice();
+      newArr.splice(-1, 1);
+      this.setState({ inputTokens: newArr });
+    }
   }
 
   evaluateExpr = () => {
@@ -157,10 +171,12 @@ export default class CalculatorFrame extends Component {
       inputStr = inputTokens.map(token => token.value).join(' ');
       inputStr = inputStr.concat(' '); // space b4 concat anything else after
     }
+    // console.log('numBuffer', numBuffer);
     inputStr = inputStr.concat(numBuffer.join(''));
     return (
       <form onSubmit={this.handleSubmit}>
         <div name="expression" border="1px solid black">{inputStr}</div>
+        <button type="button" onClick={this.clearInput} value="CLEAR ALL" color="red">CLEAR ALL</button>
         <br />
         <button type="button" onClick={this.takeInput} value="7">7</button>
         <button type="button" onClick={this.takeInput} value="8">8</button>
@@ -177,7 +193,7 @@ export default class CalculatorFrame extends Component {
         <button type="button" onClick={this.takeInput} value="3">3</button>
         <button type="button" onClick={this.takeInput} value="-">-</button>
         <br />
-        <button type="button" onClick={this.clearInput} value="AC" color="red">AC</button>
+        <button type="button" onClick={this.deleteLastChar} value="Del" color="red">Del</button>
         <button type="button" onClick={this.takeInput} value="0">0</button>
         <button type="button" onClick={this.takeInput} value=".">.</button>
         <button type="button" onClick={this.takeInput} value="+">+</button>
