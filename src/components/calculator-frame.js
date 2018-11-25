@@ -1,4 +1,4 @@
-import * as math from 'mathjs';
+import * as math from 'mathjs-expression-parser';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
