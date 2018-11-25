@@ -1,6 +1,20 @@
+/* eslint-disable no-alert */
 import * as math from 'mathjs-expression-parser';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+
+function Token(type, value) {
+  this.type = type;
+  this.value = value;
+}
+
+function isDigit(ch) {
+  return /\d/.test(ch);
+}
+
+function isOperator(ch) {
+  return /\+|-|\*|\//.test(ch);
+}
 
 export default class CalculatorFrame extends Component {
   static propTypes = {
@@ -10,40 +24,143 @@ export default class CalculatorFrame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      input: '',
+      decimalAlready: false,
+      inputTokens: [],
+      numBuffer: [],
     };
   }
 
+  validateInput = (char) => {
+    const { decimalAlready, inputTokens, numBuffer } = this.state;
+
+    /* Rule: First token can be anything but * and / */
+    if (!inputTokens.length
+      && (!numBuffer.length || isOperator(numBuffer[numBuffer.length - 1]))
+      && (char === '*' || char === '/')) {
+      alert('Invalid first input'); return false;
+    }
+
+    /* Rule: Decimal point cannot repeat within a single number */
+    if (decimalAlready && char === '.') {
+      alert('Invalid decimal point'); return false;
+    }
+
+    if (inputTokens.length) {
+      const lastToken = inputTokens[inputTokens.length - 1];
+
+      /* Rule: Operators cannot be succeeded by another operator, except for + and - */
+      if (lastToken.type === 'Operator'
+        // check in case numBuffer is holding some value not yet emptied out
+        && (!numBuffer.length || isOperator(numBuffer[numBuffer.length - 1]))
+        && (char === '*' || char === '/')) {
+        alert('Invalid operator'); return false;
+      }
+
+      /* Rule: No 0 literal is allowed after a / operator */
+      // isOperator(char) === true signals numBuffer to be joined at this point,
+      // telling us whether a 0 literal is submitted
+      if (isOperator(char) && lastToken.value === '/' && parseInt(numBuffer.join(''), 10) === 0) {
+        alert('No division by 0'); return false;
+      }
+    }
+
+    return true;
+  }
+
   takeInput = (e) => {
-    const nextChar = e.target.value;
-    this.setState(state => ({ input: state.input.concat(nextChar) }));
+    const char = e.target.value;
+    const inputIsValid = this.validateInput(char);
+
+    if (!inputIsValid) return;
+
+    if (isDigit(char) || char === '.') {
+      // console.log('case 1');
+      this.setState(state => ({
+        decimalAlready: char === '.',
+        numBuffer: [...state.numBuffer, char],
+      }));
+    } else if (isOperator(char)) {
+      const { inputTokens, numBuffer } = this.state;
+
+      // special case: + or - preceeding an operant e.g. '+2' or '3 * --+-1'
+      if ((char === '+' || char === '-')
+        && (!inputTokens.length
+          || inputTokens[inputTokens.length - 1].type === 'Operator')) {
+        // console.log('case 2');
+        this.setState(state => ({
+          numBuffer: [...state.numBuffer, char],
+        }));
+      } else {
+        // console.log('case 3');
+        if (numBuffer.length) {
+          const newNum = numBuffer.join('');
+          this.setState(state => ({
+            inputTokens: [...state.inputTokens, new Token('Literal', newNum)],
+            numBuffer: [],
+          }));
+        }
+        this.setState(state => ({
+          inputTokens: [...state.inputTokens, new Token('Operator', char)],
+        }));
+      }
+    }
   }
 
   clearInput = () => {
-    this.setState({ input: '' });
+    this.setState({ inputTokens: [] });
   }
 
-  evaluateInputExpr = (e) => {
-    e.preventDefault();
-    const { input } = this.state;
-    if (!input.length) {
-      // empty input aka form is invalid, so we do nothing
-      alert('Cannot submit empty');
-      return;
-    }
-    // TODO: may want to validate the input first
+  evaluateExpr = () => {
+    const { inputTokens } = this.state;
+    const input = inputTokens.map(token => token.value).join(' ');
     const output = math.eval(input);
-    const newRecord = `${input}=${output}`;
+    const newRecord = `${input} = ${output}`;
     const { onSubmitRecord } = this.props;
     onSubmitRecord(newRecord);
     this.clearInput();
   }
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { inputTokens, numBuffer } = this.state;
+
+    /* Rule: No empty submission */
+    if (!inputTokens.length) {
+      alert('Cannot submit empty'); return;
+    }
+
+    /* Rule: Last token must be either a digit or a valid decimal point */
+    if (!numBuffer.length || isOperator(numBuffer[numBuffer.length - 1])) {
+      alert('Cannot end with an operator'); return;
+    }
+
+    /* Rule: No 0 literal is allowed after a / operator */
+    const lastToken = inputTokens[inputTokens.length - 1];
+    if (lastToken.value === '/' && parseInt(numBuffer.join(''), 10) === 0) {
+      alert('No division by 0'); return;
+    }
+
+    // empty out everything in numBuffer
+    const newNum = numBuffer.join('');
+    this.setState(state => ({
+      inputTokens: [...state.inputTokens, new Token('Literal', newNum)],
+      numBuffer: [],
+    }), () => {
+      this.evaluateExpr();
+    });
+  }
+
   render() {
-    const { input } = this.state;
+    const { inputTokens, numBuffer } = this.state;
+    let inputStr = '';
+    if (inputTokens.length) {
+      inputStr = inputTokens.map(token => token.value).join(' ');
+      inputStr = inputStr.concat(' '); // space b4 concat anything else after
+    }
+    inputStr = inputStr.concat(numBuffer.join(''));
     return (
-      <form onSubmit={this.evaluateInputExpr}>
-        <div name="expression" border="1px solid black">{input}</div>
+      <form onSubmit={this.handleSubmit}>
+        <div name="expression" border="1px solid black">{inputStr}</div>
         <br />
         <button type="button" onClick={this.takeInput} value="7">7</button>
         <button type="button" onClick={this.takeInput} value="8">8</button>
