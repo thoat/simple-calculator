@@ -85,7 +85,9 @@ export default class CalculatorFrame extends Component {
       // special case: + or - preceeding an operant e.g. '+2' or '3 * --+-1'
       if ((char === '+' || char === '-')
         && (!inputTokens.length
-          || inputTokens[inputTokens.length - 1].type === 'Operator')) {
+          || inputTokens[inputTokens.length - 1].type === 'Operator')
+        && (!numBuffer.length
+          || isOperator(numBuffer[numBuffer.length - 1]))) {
         // console.log('case 2');
         this.setState(state => ({
           numBuffer: [...state.numBuffer, char],
