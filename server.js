@@ -27,7 +27,7 @@ contains if a backend error or network partition happens */
 db.on('error', (err) => {
   console.log('Unexpected error on idle client', err);
   process.exit(-1);
-});
+});  
 
 const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl ORDER BY created_at DESC LIMIT 10;';
 
