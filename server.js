@@ -13,9 +13,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-console.log('process env node env: ', process.env.NODE_ENV);
-console.log('process env db url: ', process.env.DATABASE_URL);
-
 /* Use a connection pool instead of a single Client because this app
 will make frequent queries */
 const db = new Pool({
@@ -46,7 +43,6 @@ const SAVE_RECORD_QUERY = `INSERT INTO ${historyTable}(entry) VALUES($1)`;
 const saveNewRecord = async (data) => {
   try {
     const { entry } = data;
-    console.log('neww recorddd', data);
     await db.query(SAVE_RECORD_QUERY, [entry]);
     emitHistory(io);
   } catch (err) {
