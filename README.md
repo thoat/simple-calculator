@@ -2,6 +2,11 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Usage
+
+The app requires two environment variables: `DATABASE_URL` and `TABLE_NAME` which indicate where to fetch and save your evaluated math
+expressions. From the project's root directory, `cp .env.sample .env` then replace the correct credentials to the placeholders.
+
 ## Development
 
 - To test out the real-time broadcast feature _locally_:

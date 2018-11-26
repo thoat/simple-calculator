@@ -21,15 +21,16 @@ will make frequent queries */
 const db = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
+const historyTable = process.env.TABLE_NAME;
 
 /* The pool will emit an error on behalf of any idle clients it
 contains if a backend error or network partition happens */
 db.on('error', (err) => {
   console.log('Unexpected error on idle client', err);
   process.exit(-1);
-});  
+});
 
-const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl ORDER BY created_at DESC LIMIT 10;';
+const GET_HISTORY_QUERY = `SELECT * FROM ${historyTable} ORDER BY created_at DESC LIMIT 10;`;
 
 const emitHistory = async (emitter) => {
   try {
@@ -40,15 +41,13 @@ const emitHistory = async (emitter) => {
   }
 };
 
-const SAVE_RECORD_QUERY = 'INSERT INTO top10hist_tbl (entry) VALUES ';
+const SAVE_RECORD_QUERY = `INSERT INTO ${historyTable}(entry) VALUES($1)`;
 
 const saveNewRecord = async (data) => {
   try {
     const { entry } = data;
     console.log('neww recorddd', data);
-    const query = `${SAVE_RECORD_QUERY} ('${entry}');`;
-    console.log('query:', query);
-    await db.query(query);
+    await db.query(SAVE_RECORD_QUERY, [entry]);
     emitHistory(io);
   } catch (err) {
     console.error(`Error &^&^: ${err}`);
