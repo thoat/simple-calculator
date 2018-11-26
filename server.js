@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+require('dotenv').config();
 const { Pool } = require('pg');
 const express = require('express');
 const http = require('http');
@@ -12,10 +13,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+console.log('process env node env: ', process.env.NODE_ENV);
+console.log('process env db url: ', process.env.DATABASE_URL);
+
 /* Use a connection pool instead of a single Client because this app
 will make frequent queries */
 const db = new Pool({
-  connectionString: 'postgres://thoa2:sezzle2K!8@localhost:5433/calc_db', // process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL,
 });
 
 /* The pool will emit an error on behalf of any idle clients it
@@ -61,7 +65,7 @@ io.on('connection', (socket) => {
 // await pool.end();
 
 // For Heroku deployment
-// const prod = process.env.NODE_ENV === 'production';
+// const prod = app.get('env') === 'production';
 // if (prod) {
 //   app.use(express.static(`${__dirname}/build`));
 //   app.get('*', (req, res) => {
