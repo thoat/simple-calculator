@@ -76,7 +76,7 @@ export default class CalculatorFrame extends Component {
     if (isDigit(char) || char === '.') {
       // console.log('case 1');
       this.setState(state => ({
-        decimalAlready: char === '.',
+        decimalAlready: state.decimalAlready || char === '.',
         numBuffer: [...state.numBuffer, char],
       }));
     } else if (isOperator(char)) {
@@ -97,6 +97,7 @@ export default class CalculatorFrame extends Component {
           this.setState(state => ({
             inputTokens: [...state.inputTokens, new Token('Literal', newNum)],
             numBuffer: [],
+            decimalAlready: false,
           }));
         }
         this.setState(state => ({
@@ -107,7 +108,7 @@ export default class CalculatorFrame extends Component {
   }
 
   clearInput = () => {
-    this.setState({ inputTokens: [], numBuffer: [] });
+    this.setState({ inputTokens: [], numBuffer: [], decimalAlready: false });
   }
 
   deleteLastChar = () => {
@@ -158,7 +159,6 @@ export default class CalculatorFrame extends Component {
     const newNum = numBuffer.join('');
     this.setState(state => ({
       inputTokens: [...state.inputTokens, new Token('Literal', newNum)],
-      numBuffer: [],
     }), () => {
       this.evaluateExpr();
     });
