@@ -4,7 +4,13 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 
-const port = process.env.PORT || 5000;
+// const index = require('./routes/index');
+
+const app = express();
+// app.use(index);
+
+const server = http.createServer(app);
+const io = socketIo(server);
 
 /* Use a connection pool instead of a single Client because this app
 will make frequent queries */
@@ -19,28 +25,12 @@ db.on('error', (err) => {
   process.exit(-1);
 });
 
-// const index = require('./routes/index');
-
-const app = express();
-// app.use(index);
-
-const server = http.createServer(app);
-
 const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl LIMIT 10;';
 
-const fetchHistory = async (socket) => {
+const emitHistory = async (emitter) => {
   try {
     const { rows } = await db.query(GET_HISTORY_QUERY);
-    socket.emit('history', rows);
-  } catch (err) {
-    console.error(`Error &^&^: ${err}`);
-  }
-};
-
-const forceUpdateHistory = async (io) => {
-  try {
-    const { rows } = await db.query(GET_HISTORY_QUERY);
-    io.emit('history', rows);
+    emitter.emit('history', rows);
   } catch (err) {
     console.error(`Error &^&^: ${err}`);
   }
@@ -48,25 +38,24 @@ const forceUpdateHistory = async (io) => {
 
 const SAVE_RECORD_QUERY = 'INSERT INTO top10hist_tbl (entry) VALUES ';
 const DELETE_OLDEST_QUERY = 'DELETE FROM top10hist_tbl WHERE rowid = ('
-+ 'SELECT rowid FROM top10hist_tbl LIMIT 1);';
+  + 'SELECT rowid FROM top10hist_tbl LIMIT 1);';
 
-const saveNewRecord = async (data, socket) => {
+const saveNewRecord = async (data) => {
   try {
     const { entry } = data;
     console.log('neww recorddd', data);
     const query = `${SAVE_RECORD_QUERY} ('${entry}'); ${DELETE_OLDEST_QUERY}`;
     console.log('query:', query);
     await db.query(query);
-    forceUpdateHistory(socket);
+    emitHistory(io);
   } catch (err) {
     console.error(`Error &^&^: ${err}`);
   }
 };
 
-const io = socketIo(server);
 io.on('connection', (socket) => {
-  console.log('New client connected', fetchHistory(socket));
-  socket.on('new record', data => saveNewRecord(data, io));
+  console.log('New client connected', emitHistory(socket));
+  socket.on('new record', data => saveNewRecord(data));
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
@@ -89,4 +78,5 @@ io.on('connection', (socket) => {
 //   });
 // }
 
+const port = process.env.PORT || 5000;
 server.listen(port, console.log(`Listening on ${port}...`));
