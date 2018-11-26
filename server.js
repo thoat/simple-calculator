@@ -1,23 +1,9 @@
 /* eslint-disable no-console */
+require('dotenv').config();
 const { Pool } = require('pg');
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-
-const port = process.env.PORT || 5000;
-
-/* Use a connection pool instead of a single Client because this app
-will make frequent queries */
-const db = new Pool({
-  connectionString: 'postgres://thoa2:sezzle2K!8@localhost:5433/calc_db', // process.env.DATABASE_URL,
-});
-
-/* The pool will emit an error on behalf of any idle clients it
-contains if a backend error or network partition happens */
-db.on('error', (err) => {
-  console.log('Unexpected error on idle client', err);
-  process.exit(-1);
-});
 
 // const index = require('./routes/index');
 
@@ -25,6 +11,23 @@ const app = express();
 // app.use(index);
 
 const server = http.createServer(app);
+
+const port = process.env.PORT || 5000;
+console.log('process env node env: ', process.env.NODE_ENV);
+console.log('process env db url: ', process.env.DATABASE_URL);
+
+/* Use a connection pool instead of a single Client because this app
+will make frequent queries */
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+/* The pool will emit an error on behalf of any idle clients it
+contains if a backend error or network partition happens */
+db.on('error', (err) => {
+  console.log('Unexpected error on idle client', err);
+  process.exit(-1);
+});  
 
 const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl ORDER BY created_at DESC LIMIT 10;';
 
@@ -72,7 +75,7 @@ io.on('connection', (socket) => {
 // await pool.end();
 
 // For Heroku deployment
-// const prod = process.env.NODE_ENV === 'production';
+// const prod = app.get('env') === 'production';
 // if (prod) {
 //   app.use(express.static(`${__dirname}/build`));
 //   app.get('*', (req, res) => {
