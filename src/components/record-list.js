@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const RecordList = ({ entries }) => (
-  <div>
+  <div id="record-list">
     <h4>Last 10 entries (most recent first):</h4>
     <ol>{entries}</ol>
   </div>

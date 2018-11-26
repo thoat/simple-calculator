@@ -2,14 +2,9 @@
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-}
-
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,7 +13,65 @@
   color: white;
 }
 
-.App-link {
+#calculator-frame, #record-list {
+  width: 45%;
+  padding: 25px 0;
+  margin: 1px 10px;
+  display: inline-block;
+  border: 2.5px solid #282c34;
+}
+
+#record-list > h4 {
+  margin: 15px 0;
+}
+
+#record-list > ol {
+  margin-top: 10px;
+  margin-left: 40px;
+  text-align: left;
+}
+
+li {
+  padding: 7.5px 15px;
+}
+
+#calculator-frame button, input {
+  justify-items: center;
+  height: 50px;
+  font-weight: bold;
+  font-size: 110%;
+  border-radius: 6px;
+}
+
+#expression-textarea, .spanning-btn {
+  width: -webkit-fill-available;
+  margin: 1px 30%;
+}
+
+#expression-textarea {
+  height: 30px;
+  border: 1px solid grey;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clear-btn {
+  background-color: red;
+}
+
+.operator-btn {
+  background-color: yellow;
+}
+
+#submit-btn {
+  background-color: green;
+}
+
+.clear-btn, #submit-btn {
+  color: white;
+}
+/* .App-link {
   color: #61dafb;
 }
 
@@ -29,4 +82,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */

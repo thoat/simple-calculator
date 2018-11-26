@@ -174,31 +174,35 @@ export default class CalculatorFrame extends Component {
     // console.log('numBuffer', numBuffer);
     inputStr = inputStr.concat(numBuffer.join(''));
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div name="expression" border="1px solid black">{inputStr}</div>
-        <button type="button" onClick={this.clearInput} value="CLEAR ALL" color="red">CLEAR ALL</button>
+      <form id="calculator-frame" onSubmit={this.handleSubmit}>
+        <div id="expression-textarea" border="1px solid black">{inputStr}</div>
+        <button className="clear-btn spanning-btn" type="button" onClick={this.clearInput} value="CLEAR ALL" color="red">CLEAR ALL</button>
         <br />
-        <button type="button" onClick={this.takeInput} value="7">7</button>
-        <button type="button" onClick={this.takeInput} value="8">8</button>
-        <button type="button" onClick={this.takeInput} value="9">9</button>
-        <button type="button" onClick={this.takeInput} value="/">/</button>
-        <br />
-        <button type="button" onClick={this.takeInput} value="4">4</button>
-        <button type="button" onClick={this.takeInput} value="5">5</button>
-        <button type="button" onClick={this.takeInput} value="6">6</button>
-        <button type="button" onClick={this.takeInput} value="*">*</button>
-        <br />
-        <button type="button" onClick={this.takeInput} value="1">1</button>
-        <button type="button" onClick={this.takeInput} value="2">2</button>
-        <button type="button" onClick={this.takeInput} value="3">3</button>
-        <button type="button" onClick={this.takeInput} value="-">-</button>
-        <br />
-        <button type="button" onClick={this.deleteLastChar} value="Del" color="red">Del</button>
-        <button type="button" onClick={this.takeInput} value="0">0</button>
-        <button type="button" onClick={this.takeInput} value=".">.</button>
-        <button type="button" onClick={this.takeInput} value="+">+</button>
-        <br />
-        <input type="submit" value="OK" backgroundColor="green" />
+        <div className="keyboard-row">
+          <button type="button" onClick={this.takeInput} value="7">7</button>
+          <button type="button" onClick={this.takeInput} value="8">8</button>
+          <button type="button" onClick={this.takeInput} value="9">9</button>
+          <button className="operator-btn" type="button" onClick={this.takeInput} value="/">/</button>
+        </div>
+        <div className="keyboard-row">
+          <button type="button" onClick={this.takeInput} value="4">4</button>
+          <button type="button" onClick={this.takeInput} value="5">5</button>
+          <button type="button" onClick={this.takeInput} value="6">6</button>
+          <button className="operator-btn" type="button" onClick={this.takeInput} value="*">*</button>
+        </div>
+        <div className="keyboard-row">
+          <button type="button" onClick={this.takeInput} value="1">1</button>
+          <button type="button" onClick={this.takeInput} value="2">2</button>
+          <button type="button" onClick={this.takeInput} value="3">3</button>
+          <button className="operator-btn" type="button" onClick={this.takeInput} value="-">-</button>
+        </div>
+        <div className="keyboard-row">
+          <button className="clear-btn" type="button" onClick={this.deleteLastChar} value="DEL" color="red">DEL</button>
+          <button type="button" onClick={this.takeInput} value="0">0</button>
+          <button type="button" onClick={this.takeInput} value=".">.</button>
+          <button className="operator-btn" type="button" onClick={this.takeInput} value="+">+</button>
+        </div>
+        <input id="submit-btn" className="spanning-btn" type="submit" value="OK" backgroundColor="green" />
       </form>
     );
   }

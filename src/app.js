@@ -29,8 +29,8 @@ class App extends Component {
     if (data) {
       const entries = data.map(row => <li key={row.rowid}>{row.entry}</li>);
       return (
-        <div>
-          <h1>Your Simple Calculator</h1>
+        <div className="App">
+          <h1 className="App-header">Your Simple Calculator</h1>
           <CalculatorFrame onSubmitRecord={this.handleNewRecord} />
           <RecordList entries={entries} />
         </div>
