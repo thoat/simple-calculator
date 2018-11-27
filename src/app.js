@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import socketIoClient from 'socket.io-client';
+import socketIoClient from 'socket.io-client'; /* have to explicitly use this
+client library bcz I'm using Node. If I initialize socket inside index.html,
+then a standalone build of the client is already exposed by default by the
+server at /socket.io/socket.io.js (acc. to the docs). */
 import './app.css';
 
 import CalculatorFrame from './components/calculator-frame';
 import RecordList from './components/record-list';
 
-// const socket = socketIoClient('ws://localhost:3000'); //, {transports: ['websocket']}); PREVIOUS TROUBLESHOOTING
-
 class App extends Component {
   state = {
     data: false,
-    socket: socketIoClient('http://127.0.0.1:5000'), // um, cannot leave this
-    // URL empty, or else WebSocket will try polling and yield error
+    socket: socketIoClient(window.location.href), /* um, cannot leave this URL
+    empty, or else WebSocket will try polling and yield error */
   };
 
   componentDidMount() {
