@@ -14,46 +14,60 @@
 }
 
 #calculator-frame, #record-list {
-  width: 45%;
-  padding: 25px 0;
-  margin: 1px 10px;
+  width: calc(11em + 25vmin);
+  height: calc(22em + 9vmax);
+  /* min-width: max-content; */
+  padding: 3em 0;
+  margin: 1vw;
+  vertical-align: middle;
   display: inline-block;
   border: 2.5px solid #282c34;
 }
 
 #record-list > h4 {
-  margin: 15px 0;
+  margin-bottom: 10px;
+  margin-top: 0;
+  font-size: calc(15px + 0.75vmin);
 }
 
 #record-list > ol {
-  margin-top: 10px;
-  margin-left: 40px;
+  margin: 10px calc(0.5vw + 2vmin);
   text-align: left;
 }
 
 li {
-  padding: 7.5px 15px;
+  padding-left: 7.5px;
+  padding-top: 15px;
+  font-size: calc(12px + 0.75vmin);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-#calculator-frame button, input {
+#calculator-frame button, #submit-btn {
   justify-items: center;
   height: 50px;
   font-weight: bold;
   font-size: 110%;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   border-radius: 6px;
 }
 
-#expression-textarea, .spanning-btn {
-  width: -webkit-fill-available;
-  margin: 1px 30%;
+.keyboard-row button {
+  min-width: 50px;
+}
+
+.spanning-btn {
+  width: 200px;
 }
 
 #expression-textarea {
-  height: 30px;
-  border: 1px solid grey;
-  display: flex;
+  font-size: 23px; 
+  min-height: 2em;
+  width: 196px;
+  border: 1.5px solid #282c34;
+  display: inline-flex;
   flex-direction: column;
   justify-content: center;
+  overflow: auto;
 }
 
 .clear-btn {
@@ -71,15 +85,3 @@ li {
 .clear-btn, #submit-btn {
   color: white;
 }
-/* .App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-} */
