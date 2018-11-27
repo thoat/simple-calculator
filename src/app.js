@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import socketIoClient from 'socket.io-client';
 import './app.css';
 
+import CalculatorFrame from './components/calculator-frame';
+import RecordList from './components/record-list';
+
 // const socket = socketIoClient('ws://localhost:3000'); //, {transports: ['websocket']}); PREVIOUS TROUBLESHOOTING
 
 class App extends Component {
@@ -16,12 +19,9 @@ class App extends Component {
     socket.on('history', data => this.setState({ data }));
   }
 
-  handleNewRecord = (e) => {
-    e.preventDefault();
-    const { value } = e.target.elements.expression; // e.target returns the "form" object
-    console.log(value);
+  handleNewRecord = (record) => {
     const { socket } = this.state;
-    socket.emit('new record', { entry: value });
+    socket.emit('new record', { entry: record });
   }
 
   render() {
@@ -29,23 +29,14 @@ class App extends Component {
     if (data) {
       const entries = data.map(row => <li key={row.rowid}>{row.entry}</li>);
       return (
-        <div>
-          <ul>{entries}</ul>
-          <form onSubmit={this.handleNewRecord}>
-            {'Enter an expression: '}
-            <input type="text" name="expression" value="xYxYxY"/>
-            <br />
-            <input type="submit" value="Submit" />
-          </form>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <p>Loading...</p>
+        <div className="App">
+          <h1 className="App-header">Your Simple Calculator</h1>
+          <CalculatorFrame onSubmitRecord={this.handleNewRecord} />
+          <RecordList entries={entries} />
         </div>
       );
     }
+    return <div><p>Loading...</p></div>;
   }
 }
 

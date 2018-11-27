@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+require('dotenv').config();
 const { Pool } = require('pg');
 const express = require('express');
 const http = require('http');
@@ -15,8 +16,9 @@ const io = socketIo(server);
 /* Use a connection pool instead of a single Client because this app
 will make frequent queries */
 const db = new Pool({
-  connectionString: 'postgres://thoa2:sezzle2K!8@localhost:5433/calc_db', // process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL,
 });
+const historyTable = process.env.TABLE_NAME;
 
 /* The pool will emit an error on behalf of any idle clients it
 contains if a backend error or network partition happens */
@@ -25,7 +27,7 @@ db.on('error', (err) => {
   process.exit(-1);
 });
 
-const GET_HISTORY_QUERY = 'SELECT * FROM top10hist_tbl LIMIT 10;';
+const GET_HISTORY_QUERY = `SELECT * FROM ${historyTable} ORDER BY created_at DESC LIMIT 10;`;
 
 const emitHistory = async (emitter) => {
   try {
@@ -36,17 +38,12 @@ const emitHistory = async (emitter) => {
   }
 };
 
-const SAVE_RECORD_QUERY = 'INSERT INTO top10hist_tbl (entry) VALUES ';
-const DELETE_OLDEST_QUERY = 'DELETE FROM top10hist_tbl WHERE rowid = ('
-  + 'SELECT rowid FROM top10hist_tbl LIMIT 1);';
+const SAVE_RECORD_QUERY = `INSERT INTO ${historyTable}(entry) VALUES($1)`;
 
 const saveNewRecord = async (data) => {
   try {
     const { entry } = data;
-    console.log('neww recorddd', data);
-    const query = `${SAVE_RECORD_QUERY} ('${entry}'); ${DELETE_OLDEST_QUERY}`;
-    console.log('query:', query);
-    await db.query(query);
+    await db.query(SAVE_RECORD_QUERY, [entry]);
     emitHistory(io);
   } catch (err) {
     console.error(`Error &^&^: ${err}`);
@@ -62,10 +59,8 @@ io.on('connection', (socket) => {
 // when to?
 // await pool.end();
 
-// app.use(express.json());
-
 // For Heroku deployment
-// const prod = process.env.NODE_ENV === 'production';
+// const prod = app.get('env') === 'production';
 // if (prod) {
 //   app.use(express.static(`${__dirname}/build`));
 //   app.get('*', (req, res) => {

@@ -2,14 +2,9 @@
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-}
-
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,15 +13,75 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+#calculator-frame, #record-list {
+  width: calc(11em + 25vmin);
+  height: calc(22em + 9vmax);
+  /* min-width: max-content; */
+  padding: 3em 0;
+  margin: 1vw;
+  vertical-align: middle;
+  display: inline-block;
+  border: 2.5px solid #282c34;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#record-list > h4 {
+  margin-bottom: 10px;
+  margin-top: 0;
+  font-size: calc(15px + 0.75vmin);
+}
+
+#record-list > ol {
+  margin: 10px calc(0.5vw + 2vmin);
+  text-align: left;
+}
+
+li {
+  padding-left: 7.5px;
+  padding-top: 15px;
+  font-size: calc(12px + 0.75vmin);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+#calculator-frame button, #submit-btn {
+  justify-items: center;
+  height: 50px;
+  font-weight: bold;
+  font-size: 110%;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  border-radius: 6px;
+}
+
+.keyboard-row button {
+  min-width: 50px;
+}
+
+.spanning-btn {
+  width: 200px;
+}
+
+#expression-textarea {
+  font-size: 23px; 
+  min-height: 2em;
+  width: 196px;
+  border: 1.5px solid #282c34;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: auto;
+}
+
+.clear-btn {
+  background-color: red;
+}
+
+.operator-btn {
+  background-color: yellow;
+}
+
+#submit-btn {
+  background-color: green;
+}
+
+.clear-btn, #submit-btn {
+  color: white;
 }
