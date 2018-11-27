@@ -1,10 +1,12 @@
 {
+  "author": "Thoa Ta (http://thriving-thoa.simplesite.com)",
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
   ],
+  "bugs": "https://github.com/thoat/simple-calculator/issues",
   "dependencies": {
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
@@ -29,11 +31,17 @@
     "eslint-plugin-react": "7.11.1",
     "nodemon": "^1.18.6"
   },
+  "engines": {
+    "node": ">= 8",
+    "npm": ">= 6",
+    "yarn": ">= 1.12"
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
   "name": "simple-calculator",
   "private": true,
+  "repository": "github:thoat/simple-calculator",
   "scripts": {
     "build": "react-scripts build",
     "client": "react-scripts start",
