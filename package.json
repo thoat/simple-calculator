@@ -39,7 +39,7 @@
     "client": "react-scripts start",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
     "eject": "react-scripts eject",
-    "lint all": "node_modules/.bin/eslint .",
+    "lintall": "node_modules/.bin/eslint .",
     "lint": "node_modules/.bin/eslint",
     "server": "nodemon server.js",
     "start": "react-scripts start",

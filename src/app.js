@@ -35,13 +35,8 @@ class App extends Component {
           <RecordList entries={entries} />
         </div>
       );
-    } else {
-      return (
-        <div>
-          <p>Loading...</p>
-        </div>
-      );
     }
+    return <div><p>Loading...</p></div>;
   }
 }
 
