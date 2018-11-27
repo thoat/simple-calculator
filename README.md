@@ -7,6 +7,25 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 The app requires two environment variables: `DATABASE_URL` and `TABLE_NAME` which indicate where to fetch and save your evaluated math
 expressions. From the project's root directory, `cp .env.sample .env` then replace the correct credentials to the placeholders.
 
+## Run
+
+Assuming you have _already_ followed the notes under [Usage](#usage).
+
+- Development mode: (the app will auto-open a browser window or tab at http://localhost:3000)
+
+```
+yarn
+yarn dev
+```
+
+- Production mode: (you will have to manually open http://localhost:5000 in your browser once the app starts)
+
+```
+yarn
+yarn build
+NODE_ENV=production yarn start
+```
+
 ## Development
 
 - To test out the real-time broadcast feature _locally_:

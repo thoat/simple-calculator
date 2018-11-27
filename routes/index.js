@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   res.send({ response: 'Server app is alive' }).status(200);
+  console.log(req.app.get('env'));
 });
 
 module.exports = router;

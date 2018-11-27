@@ -60,18 +60,18 @@ io.on('connection', (socket) => {
 // await pool.end();
 
 // For Heroku deployment
-// const prod = app.get('env') === 'production';
-// if (prod) {
-//   app.use(express.static(`${__dirname}/build`));
-//   app.get('*', (req, res) => {
-//     res.sendFile(`${__dirname}/build/index.html`);
-//   });
-// } else {
-//   app.use(express.static(`${__dirname}/public`));
-//   app.get('*', (req, res) => {
-//     res.sendFile(`${__dirname}/public/index.html`);
-//   });
-// }
+const prod = app.get('env') === 'production';
+if (prod) {
+  app.use(express.static(`${__dirname}/build`));
+  app.get('*', (req, res) => {
+    res.sendFile(`${__dirname}/build/index.html`);
+  });
+} else {
+  // app.use(express.static(`${__dirname}/public`));
+  // app.get('*', (req, res) => {
+  //   res.sendFile(`${__dirname}/public/index.html`);
+  // });
+}
 
 const port = process.env.PORT || 5000;
 server.listen(port, console.log(`Listening on ${port}...`));
