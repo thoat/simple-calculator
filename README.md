@@ -23,7 +23,7 @@ yarn dev
 ```
 yarn
 yarn build
-NODE_ENV=production yarn start
+NODE_ENV=production yarn start # note to self: replacing `yarn start` with `heroku local` does the same thing
 ```
 
 ## Development
