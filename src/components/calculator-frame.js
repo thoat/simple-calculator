@@ -3,6 +3,8 @@ import * as math from 'mathjs-expression-parser';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import KeyboardRow from './keyboard-row';
+
 function Token(type, value) {
   this.type = type;
   this.value = value;
@@ -178,33 +180,18 @@ export default class CalculatorFrame extends Component {
     return (
       <form id="calculator-frame" onSubmit={this.handleSubmit}>
         <div id="expression-textarea" border="1px solid black">{inputStr}</div>
-        <button className="clear-btn spanning-btn" type="button" onClick={this.clearInput} value="CLEAR ALL" color="red">CLEAR ALL</button>
+        <button className="clear-btn spanning-btn" type="button" onClick={this.clearInput} value="CLEAR ALL">CLEAR ALL</button>
         <br />
+        <KeyboardRow keys={[7, 8, 9, '/']} onKeyClick={this.takeInput} />
+        <KeyboardRow keys={[4, 5, 6, '*']} onKeyClick={this.takeInput} />
+        <KeyboardRow keys={[1, 2, 3, '-']} onKeyClick={this.takeInput} />
         <div className="keyboard-row">
-          <button type="button" onClick={this.takeInput} value="7">7</button>
-          <button type="button" onClick={this.takeInput} value="8">8</button>
-          <button type="button" onClick={this.takeInput} value="9">9</button>
-          <button className="operator-btn" type="button" onClick={this.takeInput} value="/">/</button>
-        </div>
-        <div className="keyboard-row">
-          <button type="button" onClick={this.takeInput} value="4">4</button>
-          <button type="button" onClick={this.takeInput} value="5">5</button>
-          <button type="button" onClick={this.takeInput} value="6">6</button>
-          <button className="operator-btn" type="button" onClick={this.takeInput} value="*">*</button>
-        </div>
-        <div className="keyboard-row">
-          <button type="button" onClick={this.takeInput} value="1">1</button>
-          <button type="button" onClick={this.takeInput} value="2">2</button>
-          <button type="button" onClick={this.takeInput} value="3">3</button>
-          <button className="operator-btn" type="button" onClick={this.takeInput} value="-">-</button>
-        </div>
-        <div className="keyboard-row">
-          <button className="clear-btn" type="button" onClick={this.deleteLastChar} value="DEL" color="red">DEL</button>
+          <button className="clear-btn" type="button" onClick={this.deleteLastChar} value="DEL">DEL</button>
           <button type="button" onClick={this.takeInput} value="0">0</button>
           <button type="button" onClick={this.takeInput} value=".">.</button>
           <button className="operator-btn" type="button" onClick={this.takeInput} value="+">+</button>
         </div>
-        <input id="submit-btn" className="spanning-btn" type="submit" value="OK" backgroundColor="green" />
+        <input id="submit-btn" className="spanning-btn" type="submit" value="OK" />
       </form>
     );
   }
