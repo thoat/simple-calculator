@@ -2,6 +2,13 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Features
+
+- Perform simple calculations (add, subtract, multiply, divide) on numbers (integers and floats, both negative and non-negative allowed). This is feasible via the [mathjs](http://mathjs.org/) library.
+- Check validity of input expressions before feeding them into `mathjs`.
+- Update calculated results in real-time across all open browser tabs or windows.
+- Persist result entries over time, although only displaying the last 10 entries.
+
 ## Usage
 
 The app requires two environment variables: `DATABASE_URL` and `TABLE_NAME` which indicate where to fetch and save your evaluated math
